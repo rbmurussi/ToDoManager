@@ -1,5 +1,3 @@
-import 'react-native-gesture-handler';
-
 import React from 'react';
 import {AppRegistry, SafeAreaView} from 'react-native';
 import Routes from './src/routes/Routes';
