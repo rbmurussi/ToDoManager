@@ -7,23 +7,32 @@ const config = {
     projectId: "todomanager-5444a",
     storageBucket: "todomanager-5444a.appspot.com",
     messagingSenderId: "254572727152"
-};
-export const initializeFirebaseApi = () => firebase.initializeApp(config);
+}
+
+export const initializeFirebaseAPI = () => firebase.initializeApp(config);
 
 export const createUserOnFirebaseAsync = async (email, password) => {
-    const user = await firebase.auth().createUserWithEmailAndPassword(email, password);
+    const { user } = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password);
+
     return user;
 }
 
-export async function signInOnFirebaseAsync(email, password) {
-    const user = await firebase.auth().signInWithEmailAndPassword(email, password);
+export const signInOnFirebaseAsync = async (email, password) => {
+    const user = await firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password);
     return user;
 }
 
+//implementa o padrão Publisher-Subscriber
 export const currentFirebaseUser = () => {
     return new Promise((resolve, reject) => {
-        let unsubscribe = null;
-        unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+        var unsubscribe = null;
+        unsubscribe = firebase
+            .auth()
+            .onAuthStateChanged((user) => {
                 resolve(user);
             }, (error) => {
                 reject(error);
@@ -35,29 +44,32 @@ export const currentFirebaseUser = () => {
 
 export const writeTaskOnFirebaseAsync = async (task) => {
     const user = await currentFirebaseUser();
-    var tasksReference = firebase
+
+    var taskReference = firebase
         .database()
         .ref(user.uid);
-    const key = task.key ?
-        task.key :
-        tasksReference
-            .child('tasks')
-            .push()
-            .key;
-    return await tasksReference
+
+    const key = task.key ? task.key : taskReference
+        .child('tasks')
+        .push()
+        .key;
+
+    return await taskReference
         .child(`tasks/${key}`)
         .update(task);
 }
 
 export const readTasksFromFirebaseAsync = async (listener) => {
     const user = await currentFirebaseUser();
+
     var tasksReference = firebase
         .database()
         .ref(user.uid)
-        .child('tasks');
+        .child('tasks')
+
     tasksReference
         .on('value', (snapshot) => {
-            var tasks = [];
+            var tasks = []
             snapshot.forEach(function (element) {
                 var task = element.val();
                 task.key = element.key;

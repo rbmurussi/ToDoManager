@@ -1,20 +1,26 @@
 import React from 'react';
-import {AppRegistry, SafeAreaView} from 'react-native';
-import Routes from './src/routes/Routes';
+
+import 'react-native-gesture-handler';
+
+import { AppRegistry, SafeAreaView } from 'react-native';
+
+import Routes from './src/services/Routes';
 import {name as appName} from './app.json';
-import { initializeFirebaseApi } from './src/services/FirebaseApi';
-import {NavigationContainer} from '@react-navigation/native';
+
+import { NavigationContainer } from '@react-navigation/native';
+import { initializeFirebaseAPI } from './src/services/FirebaseAPI';
 
 const wrappedRoutes = () => {
     return (
         <NavigationContainer>
-            <SafeAreaView style={{flex: 1}}>
+            <SafeAreaView style={{ flex: 1 }}>
                 <Routes />
             </SafeAreaView>
         </NavigationContainer>
     );
 };
+
 AppRegistry.registerComponent(appName, () => {
-    initializeFirebaseApi();
-    return wrappedRoutes;
+    initializeFirebaseAPI();
+    return wrappedRoutes
 });

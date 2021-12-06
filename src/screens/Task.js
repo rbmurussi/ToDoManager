@@ -1,22 +1,21 @@
-import React, {Component} from 'react';
-import {View, TextInput, Switch, Text, Button, StyleSheet, Alert} from 'react-native';
-import { writeTaskOnFirebaseAsync } from '../services/FirebaseApi';
+import React, { Component } from 'react';
+import { StyleSheet, View, Switch, TouchableHighlight, TextInput, Text, Alert } from 'react-native';
+import { writeTaskOnFirebaseAsync } from '../services/FirebaseAPI';
 
 export default class Task extends Component {
-    static navigationOptions = {
-        title: 'Task'
-    }
     state = {
         key: '',
         title: '',
         resume: '',
         priority: true,
-        isDone: false
+        isDone: false,
     };
+
     constructor(props) {
         super(props);
+
         try {
-            const {task} = this.props.route.params;
+            const { task } = this.props.route.params;
             this.state = {
                 key: task.key,
                 title: task.title,
@@ -24,8 +23,9 @@ export default class Task extends Component {
                 priority: task.priority,
                 isDone: task.isDone,
             };
+            console.log("Editando tarefa existente")
         } catch (error) {
-            console.log('error', error);
+            console.log("Criando nova tarefa")
         }
     }
     async _saveTaskAsync() {
@@ -34,46 +34,55 @@ export default class Task extends Component {
             title: this.state.title,
             resume: this.state.resume,
             priority: this.state.priority,
-            isDone: this.state.isDone
+            isDone: this.state.isDone,
         };
+
         try {
             await writeTaskOnFirebaseAsync(task);
             this.props.navigation.goBack();
         } catch (error) {
-            Alert.alert("Erro Saving", error.message);
+            Alert.alert("Ops, houve um erro", error.message);
         }
     }
+
     render() {
         return (
             <View style={styles.container}>
                 <TextInput style={styles.input}
-                           placeholder='Title'
-                           value={this.state.title}
-                           onChangeText={(value) => this.setState({ title: value })} />
+                    placeholder="Título"
+                    value={this.state.title}
+                    onChangeText={(typedTtitle) => this.setState({ title: typedTtitle })} />
+
                 <TextInput style={[styles.input, styles.multilineInput]}
-                           placeholder='Resume'
-                           multiline={true} numberOfLines={4}
-                           value={this.state.resume}
-                           onChangeText={(value) => this.setState({ resume: value })} />
+                    placeholder="Resumo"
+                    multiline={true}
+                    numberOfLines={4}
+                    value={this.state.resume}
+                    onChangeText={(typedResume) => this.setState({ resume: typedResume })} />
+
                 <View style={styles.switchContainer}>
                     <Switch value={this.state.priority}
-                            onValueChange={(value) => this.setState({ priority: value })}
-                            value={this.state.priority} />
-                    <Text style={styles.switchText}>Hight Priority</Text>
+                        onValueChange={(value) => this.setState({ priority: value })} />
+                    <Text style={styles.switchText}>É prioridade?</Text>
                 </View>
+
                 <View style={styles.switchContainer}>
                     <Switch value={this.state.isDone}
-                            onValueChange={(value) => this.setState({ isDone: value })}
-                            value={this.state.isDone} />
-                    <Text style={styles.switchText}>Is Done?</Text>
+                        onValueChange={(value) => this.setState({ isDone: value })} />
+                    <Text style={styles.switchText}>Finalizado?</Text>
                 </View>
-                <Button style={styles.button}
-                        title='Save'
-                        onPress={() => this._saveTaskAsync()} />
+
+                <TouchableHighlight style={styles.submit} onPress={() =>
+                    this._saveTaskAsync()} underlayColor='#fff'>
+                    <Text style={styles.submitText} >Salvar</Text>
+                </TouchableHighlight>
             </View>
         );
     }
 }
+
+const lightGray = '#D3D3D3D3';
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -81,10 +90,16 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     input: {
+        padding: 8,
         marginBottom: 20,
+        height: 40,
+        borderWidth: 1.0,
+        borderColor: lightGray,
     },
     multilineInput: {
         height: 100,
+        borderWidth: 1.0,
+        borderColor: lightGray,
     },
     switchContainer: {
         flexDirection: 'row',
@@ -92,8 +107,19 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
     },
     switchText: {
-        marginLeft: 10,
+        marginLeft: 20,
         color: 'black',
-        fontSize: 18,
+        fontSize: 16,
     },
+    submit: {
+        marginTop: 10,
+        padding: 12,
+        backgroundColor: 'orange',
+        borderRadius: 10,
+    },
+    submitText: {
+        color: '#fff',
+        textAlign: 'center',
+        fontSize: 18,
+    }
 });

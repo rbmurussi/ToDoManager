@@ -1,5 +1,7 @@
 import App from './App';
 import Login from './Login';
+
+import Task from './Task';
 import Register from './Register';
 import ToDoTasks from './ToDoTasks';
 import DoneTasks from './DoneTasks';
@@ -9,46 +11,6 @@ export {
     Login,
     Register,
     ToDoTasks,
-    DoneTasks
-}
-
-
-import {createStackNavigator} from '@react-navigation/stack';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-
-import {Login, Register, ToDoTasks, DoneTasks, App} from '../screens/Screens';
-import React from 'react';
-const Stack = createStackNavigator();
-const Tab = createMaterialTopTabNavigator();
-
-
-export const TaskTab = () => {
-    return (
-        <Tab.Navigator
-            tabBarOptions={{
-                activeTintColor: 'tomato',
-                inactiveTintColor: 'gray',
-                iconStyle: {width: 20, height: 20},
-            }}>
-            <Tab.Screen name="To Do" component={ToDoTasks} />
-            <Tab.Screen name="Done" component={DoneTasks} />
-        </Tab.Navigator>
-    );
+    DoneTasks,
+    Task,
 };
-
-const Routes = () => {
-    return (
-        <Stack.Navigator headerMode="screen">
-            <Stack.Screen name="App" component={App} options={{headerShown: false}} />
-            <Stack.Screen
-                name="Login"
-                component={Login}
-                options={{headerShown: false}}
-            />
-            <Stack.Screen name="Register" component={Register} />
-            <Stack.Screen name="TaskList" component={TaskTab} />
-        </Stack.Navigator>
-    );
-};
-
-export default Routes;
